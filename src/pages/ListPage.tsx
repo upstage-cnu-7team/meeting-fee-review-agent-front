@@ -116,20 +116,13 @@ export default function ListPage({ program: fixed }: { program?: "unassigned" })
         <div className="filters">
           <input className="search wide" placeholder="⌕ 팀명, 보낸 사람, 제목" defaultValue={f.q}
             onKeyDown={(e) => e.key === "Enter" && set({ q: (e.target as HTMLInputElement).value })} />
-          <select value={f.verdict} onChange={(e) => set({ verdict: e.target.value })} className={f.verdict ? "on" : ""}>
-            <option value="">AI 판정</option><option value="reject">부적합</option><option value="needs_fix">보완필요</option>
-            <option value="review">AI 확인필요</option><option value="pass">적합</option>
-          </select>
-          <select value={f.review_status} onChange={(e) => set({ review_status: e.target.value })} className={f.review_status ? "on" : ""}>
-            <option value="">담당자 확인</option><option value="pending">미확인</option><option value="confirmed">확인완료</option>
+          <select value={sort} onChange={(e) => set({ sort: e.target.value === "received_desc" ? null : e.target.value })} title="정렬">
+            <option value="received_desc">정렬: 날짜순 (최근 먼저)</option><option value="received_asc">정렬: 날짜순 (오래된 먼저)</option>
+            <option value="default">정렬: 해결할 것 먼저</option>
           </select>
           <select value={f.reply_status} onChange={(e) => set({ reply_status: e.target.value })} className={f.reply_status ? "on" : ""}>
             <option value="">회신</option><option value="draft">초안</option><option value="sent">보냄</option>
             <option value="failed">전송 실패</option><option value="not_needed">회신 안 함</option>
-          </select>
-          <select value={sort} onChange={(e) => set({ sort: e.target.value === "received_desc" ? null : e.target.value })} title="정렬">
-            <option value="received_desc">정렬: 날짜순 (최근 먼저)</option><option value="received_asc">정렬: 날짜순 (오래된 먼저)</option>
-            <option value="default">정렬: 해결할 것 먼저</option>
           </select>
           <input type="date" value={f.from} onChange={(e) => set({ from: e.target.value })} title="접수일 부터" />
           <input type="date" value={f.to} onChange={(e) => set({ to: e.target.value })} title="접수일 까지" />
