@@ -29,6 +29,7 @@ export default function ListPage({ program: fixed }: { program?: "unassigned" })
   const [teamSearch, setTeamSearch] = useState("");
   const f = Object.fromEntries(FILTER_KEYS.map((k) => [k, sp.get(k) ?? ""]));
   const page = Number(sp.get("page") ?? 1);
+  const sort = sp.get("sort") ?? "received_desc"; // 기본: 최근에 받은 순 (담당자 요청 2026-11-02)
 
   const set = (patch: Record<string, string | null>) => {
     const next = new URLSearchParams(sp);
@@ -38,8 +39,8 @@ export default function ListPage({ program: fixed }: { program?: "unassigned" })
   };
 
   const list = useQuery({
-    queryKey: ["list", program, f, page],
-    queryFn: () => api<Page<SubmissionListItem>>(`/programs/${program}/submissions${qs({ ...f, page, size: 50 })}`),
+    queryKey: ["list", program, f, page, sort],
+    queryFn: () => api<Page<SubmissionListItem>>(`/programs/${program}/submissions${qs({ ...f, sort, page, size: 50 })}`),
     refetchInterval: (q) => (q.state.data?.items.some((i) => i.processing_status === "queued" || i.processing_status === "processing") ? 15_000 : 60_000),
   });
   const summary = useQuery({ queryKey: ["summary", program], queryFn: () => api<Summary>(`/programs/${program}/summary`), refetchInterval: 30_000 });
@@ -126,6 +127,10 @@ export default function ListPage({ program: fixed }: { program?: "unassigned" })
             <option value="">회신</option><option value="draft">초안</option><option value="sent">보냄</option>
             <option value="failed">전송 실패</option><option value="not_needed">회신 안 함</option>
           </select>
+          <select value={sort} onChange={(e) => set({ sort: e.target.value === "received_desc" ? null : e.target.value })} title="정렬">
+            <option value="received_desc">최근 받은 순</option><option value="received_asc">오래된 순</option>
+            <option value="default">처리할 건 먼저</option>
+          </select>
           <input type="date" value={f.from} onChange={(e) => set({ from: e.target.value })} title="접수일 부터" />
           <input type="date" value={f.to} onChange={(e) => set({ to: e.target.value })} title="접수일 까지" />
           {anyFilter && <button className="link" onClick={() => set(Object.fromEntries(FILTER_KEYS.map((k) => [k, null])))}>필터 초기화</button>}
@@ -165,7 +170,7 @@ export default function ListPage({ program: fixed }: { program?: "unassigned" })
             <button className="ghost small" disabled={page * list.data.size >= list.data.total} onClick={() => set({ page: String(page + 1) })}>다음 ›</button>
           </div>
         )}
-        {list.data && <p className="muted xsmall">전체 {list.data.total}건 · 정렬: 처리 실패 → 미확인(부적합 → 보완필요 → AI 확인필요 → 적합 → 검수 중) → 확인완료</p>}
+        {list.data && <p className="muted xsmall">전체 {list.data.total}건 · 정렬: {sort === "default" ? "처리 실패 → 미확인(부적합 → 보완필요 → AI 확인필요 → 적합 → 검수 중) → 확인완료" : sort === "received_asc" ? "오래된 순" : "최근 받은 순"}</p>}
       </main>
     </div>
   );
