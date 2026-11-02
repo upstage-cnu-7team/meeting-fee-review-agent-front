@@ -170,8 +170,8 @@ function MailSubject({ s }: { s: SubmissionDetail }) {
 
 function Viewer({ attachments, focus }: { attachments: Attachment[]; focus: { file_id: string | null; page: number | null; at: number } | null }) {
   const [tab, setTab] = useState(0);
-  const [zoom, setZoom] = useState(1);
-  const [fit, setFit] = useState(true);
+  const [zoom, setZoom] = useState(0.5); // 처음에는 50%로 한 쪽 전체가 보이게
+  const [fit, setFit] = useState(false);
   const [cur, setCur] = useState(1);
   const [hl, setHl] = useState<number | null>(null);
   const [broken, setBroken] = useState<Record<string, boolean>>({});
@@ -212,7 +212,7 @@ function Viewer({ attachments, focus }: { attachments: Attachment[]; focus: { fi
       <div className="viewer-bar">
         <span className="muted xsmall">{a.page_count ? `${cur} / ${a.page_count}쪽` : "—"}</span>
         <div className="spacer" />
-        <button className="ghost small" onClick={() => { setFit(false); setZoom((z) => Math.max(0.5, z - 0.25)); }}>−</button>
+        <button className="ghost small" onClick={() => { setFit(false); setZoom((z) => Math.max(0.25, z - 0.25)); }}>−</button>
         <span className="xsmall">{fit ? "폭 맞춤" : `${Math.round(zoom * 100)}%`}</span>
         <button className="ghost small" onClick={() => { setFit(false); setZoom((z) => Math.min(3, z + 0.25)); }}>+</button>
         <button className={`ghost small ${fit ? "on" : ""}`} onClick={() => setFit(true)}>폭 맞춤</button>
