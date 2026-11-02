@@ -128,8 +128,8 @@ export default function ListPage({ program: fixed }: { program?: "unassigned" })
             <option value="failed">전송 실패</option><option value="not_needed">회신 안 함</option>
           </select>
           <select value={sort} onChange={(e) => set({ sort: e.target.value === "received_desc" ? null : e.target.value })} title="정렬">
-            <option value="received_desc">최근 받은 순</option><option value="received_asc">오래된 순</option>
-            <option value="default">처리할 건 먼저</option>
+            <option value="received_desc">정렬: 날짜순 (최근 먼저)</option><option value="received_asc">정렬: 날짜순 (오래된 먼저)</option>
+            <option value="default">정렬: 해결할 것 먼저</option>
           </select>
           <input type="date" value={f.from} onChange={(e) => set({ from: e.target.value })} title="접수일 부터" />
           <input type="date" value={f.to} onChange={(e) => set({ to: e.target.value })} title="접수일 까지" />
@@ -170,7 +170,7 @@ export default function ListPage({ program: fixed }: { program?: "unassigned" })
             <button className="ghost small" disabled={page * list.data.size >= list.data.total} onClick={() => set({ page: String(page + 1) })}>다음 ›</button>
           </div>
         )}
-        {list.data && <p className="muted xsmall">전체 {list.data.total}건 · 정렬: {sort === "default" ? "처리 실패 → 미확인(부적합 → 보완필요 → AI 확인필요 → 적합 → 검수 중) → 확인완료" : sort === "received_asc" ? "오래된 순" : "최근 받은 순"}</p>}
+        {list.data && <p className="muted xsmall">전체 {list.data.total}건 · 정렬: {sort === "default" ? "처리 실패 → 미확인(부적합 → 보완필요 → AI 확인필요 → 적합 → 검수 중) → 확인완료" : sort === "received_asc" ? "날짜순 (오래된 먼저)" : "날짜순 (최근 먼저)"}</p>}
       </main>
     </div>
   );
